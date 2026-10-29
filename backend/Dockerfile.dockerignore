@@ -1,0 +1,10 @@
+# Used by: docker build -f backend/Dockerfile .   (context = project root, so paths are root-relative)
+# Note: migrations/*.sql must NOT be ignored - the API runs them at startup.
+**/node_modules
+**/dist
+backend/*.db
+backend/*.db-*
+backend/.env
+.git
+.github
+docs

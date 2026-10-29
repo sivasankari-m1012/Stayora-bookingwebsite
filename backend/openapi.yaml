@@ -1,0 +1,137 @@
+openapi: 3.0.3
+info:
+  title: Stayora API
+  version: 2.0.0
+  description: |
+    Listing content, availability, price quotes and bookings for a single-listing booking app.
+    Errors always look like `{ "error": { "code", "message", "details?", "requestId" } }`.
+servers:
+  - url: http://localhost:4000
+tags:
+  - { name: Content }
+  - { name: Stays }
+  - { name: Bookings }
+  - { name: System }
+paths:
+  /api/listing:
+    get: { tags: [Content], summary: Title, capacity, pricing, host, rules, responses: { "200": { description: OK } } }
+  /api/photos:
+    get: { tags: [Content], summary: Hero photos and rooms with ordered photos, responses: { "200": { description: OK } } }
+  /api/amenities:
+    get: { tags: [Content], summary: Featured amenities and full categories, responses: { "200": { description: OK } } }
+  /api/nearby:
+    get: { tags: [Content], summary: More stays nearby, responses: { "200": { description: OK } } }
+  /api/reviews:
+    get:
+      tags: [Content]
+      summary: Review statistics plus a page of reviews
+      parameters:
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 50, default: 6 } }
+        - { name: offset, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: q, in: query, schema: { type: string, maxLength: 100 }, description: Case-insensitive text filter }
+      responses: { "200": { description: OK }, "400": { $ref: "#/components/responses/Error" } }
+  /api/availability:
+    get:
+      tags: [Stays]
+      summary: Nights that cannot be booked (host-blocked or already booked)
+      parameters:
+        - { name: from, in: query, schema: { type: string, example: "2026-11" }, description: "First month, YYYY-MM (default: this month)" }
+        - { name: months, in: query, schema: { type: integer, minimum: 1, maximum: 12, default: 2 } }
+      responses: { "200": { description: "{ from, to, unavailable[], minDate }" }, "400": { $ref: "#/components/responses/Error" } }
+  /api/quote:
+    get:
+      tags: [Stays]
+      summary: Price and availability for a stay
+      parameters:
+        - { name: checkIn, in: query, required: true, schema: { type: string, format: date } }
+        - { name: checkOut, in: query, required: true, schema: { type: string, format: date } }
+        - { name: adults, in: query, schema: { type: integer, default: 1 } }
+        - { name: children, in: query, schema: { type: integer, default: 0 } }
+        - { name: infants, in: query, schema: { type: integer, default: 0 } }
+        - { name: pets, in: query, schema: { type: integer, default: 0 } }
+      responses: { "200": { description: OK }, "400": { $ref: "#/components/responses/Error" } }
+  /api/bookings:
+    get:
+      tags: [Bookings]
+      summary: List all bookings (admin)
+      security: [{ adminToken: [] }]
+      responses: { "200": { description: "{ items: Booking[] }" }, "401": { $ref: "#/components/responses/Error" } }
+    post:
+      tags: [Bookings]
+      summary: Create a booking
+      description: |
+        Send an `Idempotency-Key` header (any unique string per attempt). Retrying with the same key and the same
+        body returns the original booking with 200; the same key with a different body returns 409.
+      parameters:
+        - { name: Idempotency-Key, in: header, schema: { type: string, pattern: "^[\\w.:-]{1,128}$" } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateBooking" }
+      responses:
+        "201": { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/Booking" } } } }
+        "200": { description: Replay of an earlier identical request }
+        "400": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /api/bookings/{ref}:
+    parameters:
+      - { name: ref, in: path, required: true, schema: { type: string, example: BK7H2K9QWX4M } }
+    get:
+      tags: [Bookings]
+      summary: Fetch a booking by its reference
+      responses: { "200": { description: OK }, "404": { $ref: "#/components/responses/Error" } }
+    delete:
+      tags: [Bookings]
+      summary: Cancel a booking (idempotent; stays that already started cannot be cancelled)
+      responses: { "200": { description: Cancelled }, "404": { $ref: "#/components/responses/Error" }, "409": { $ref: "#/components/responses/Error" } }
+  /api/health:
+    get: { tags: [System], summary: Liveness probe, responses: { "200": { description: "{ ok: true }" } } }
+  /api/ready:
+    get: { tags: [System], summary: Readiness probe (checks the database), responses: { "200": { description: Ready }, "503": { description: Not ready } } }
+components:
+  securitySchemes:
+    adminToken: { type: http, scheme: bearer }
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: string, example: dates_unavailable }
+            message: { type: string }
+            details: { type: array, items: { type: object } }
+            requestId: { type: string }
+    CreateBooking:
+      type: object
+      required: [checkIn, checkOut, guestName, guestEmail]
+      properties:
+        checkIn: { type: string, format: date, example: "2026-10-18" }
+        checkOut: { type: string, format: date, example: "2026-10-23" }
+        adults: { type: integer, default: 1 }
+        children: { type: integer, default: 0 }
+        infants: { type: integer, default: 0 }
+        pets: { type: integer, default: 0 }
+        guestName: { type: string, minLength: 2, maxLength: 80 }
+        guestEmail: { type: string, format: email }
+    Booking:
+      type: object
+      properties:
+        reference: { type: string }
+        status: { type: string, enum: [confirmed, cancelled] }
+        checkIn: { type: string }
+        checkOut: { type: string }
+        nights: { type: integer }
+        guests: { type: object }
+        price: { type: object }
+        guest: { type: object }
+        createdAt: { type: string }
+        cancelledAt: { type: string, nullable: true }

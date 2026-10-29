@@ -1,0 +1,99 @@
+/* Booking card: date picker + guests dropdown.  "bk-", "dp-", "gp-" prefix */
+
+.bk-fields-wrap { position: relative; }
+
+.bk-add-dates { font-size: 18px !important; }
+
+.bk-clickable { cursor: pointer; }
+.bk-clickable:hover { background: #fafafa; }
+.booking-field.active { box-shadow: inset 0 0 0 2px var(--color-text); border-radius: 8px; background: #fff; }
+.booking-field .bk-filled { color: var(--color-text); }
+.guest-arrow { transition: transform .15s; }
+.guest-arrow.open { transform: rotate(180deg); }
+
+/* ---------- Date range picker ---------- */
+.dp-popup {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 50;
+  width: min(660px, calc(100vw - 32px));
+  padding: 24px; background: #fff; border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .2);
+}
+.dp-head h3 { margin: 0 0 4px; font-size: 22px; font-weight: 600; }
+.dp-head p { margin: 0 0 18px; font-size: 14px; color: var(--color-text-secondary); }
+
+.dp-months { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+.dp-nav {
+  position: absolute; top: -4px; width: 32px; height: 32px; border: none; border-radius: 50%;
+  background: transparent; font-size: 22px; line-height: 1; cursor: pointer; z-index: 1;
+}
+.dp-nav:hover:not(:disabled) { background: #f2f2f2; }
+.dp-nav:disabled { opacity: .25; cursor: default; }
+.dp-prev { left: 0; }
+.dp-next { right: 0; }
+
+
+
+.dp-foot { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 16px; }
+.dp-link { border: none; background: none; text-decoration: underline; font-weight: 600; font-size: 14px; cursor: pointer; }
+.dp-close { padding: 10px 18px; border: none; border-radius: 8px; background: var(--color-text); color: #fff; font-weight: 600; cursor: pointer; }
+
+/* ---------- Guests dropdown ---------- */
+.gp-popup {
+  position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 50;
+  padding: 20px; background: #fff; border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .2);
+}
+.gp-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; }
+.gp-row + .gp-row { border-top: 1px solid #eee; }
+.gp-row strong { font-size: 16px; }
+.gp-row p { margin: 2px 0 0; font-size: 14px; color: var(--color-text-secondary); }
+.gp-stepper { display: flex; align-items: center; gap: 14px; }
+.gp-stepper span { min-width: 18px; text-align: center; font-size: 16px; }
+.gp-stepper button {
+  width: 32px; height: 32px; border: 1px solid #b0b0b0; border-radius: 50%;
+  background: #fff; font-size: 18px; line-height: 1; cursor: pointer;
+}
+.gp-stepper button:hover:not(:disabled) { border-color: var(--color-text); }
+.gp-stepper button:disabled { opacity: .3; cursor: default; }
+.gp-note { margin: 8px 0 0; font-size: 12px; color: var(--color-text-secondary); line-height: 1.4; }
+.gp-close { display: block; margin: 14px 0 0 auto; border: none; background: none; text-decoration: underline; font-weight: 600; font-size: 14px; cursor: pointer; }
+
+/* ---------- Price breakdown ---------- */
+.bk-success { color: #008a05 !important; }
+.bk-breakdown { margin-top: 20px; font-size: 15px; }
+.bk-breakdown > div { display: flex; justify-content: space-between; padding: 6px 0; }
+.bk-total { margin-top: 10px; padding-top: 16px !important; border-top: 1px solid var(--color-border); }
+
+@media (max-width: 720px) {
+  .dp-months { grid-template-columns: 1fr; }
+  .dp-month + .dp-month { display: none; }
+}
+/* ---------- Month grid (shared) ---------- */
+.mg h4 { margin: 0 0 14px; text-align: center; font-size: 15px; font-weight: 600; }
+.mg-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+.mg-weekdays span { text-align: center; font-size: 12px; font-weight: 600; color: var(--color-text); padding-bottom: 8px; }
+.mg-cell { display: flex; justify-content: center; }
+.mg-cell.in { background: #f2f2f2; }
+.mg-cell.start { background: linear-gradient(to right, transparent 50%, #f2f2f2 50%); }
+.mg-cell.end { background: linear-gradient(to left, transparent 50%, #f2f2f2 50%); }
+.mg-cell.start.end { background: none; }
+.mg-day { width: min(100%, 40px); height: 40px; border: 1px solid transparent; border-radius: 50%; background: transparent; font-size: 14px; cursor: pointer; }
+.mg-day:hover:not(:disabled):not(.selected) { border-color: var(--color-text); }
+.mg-day:disabled { color: #c9c9c9; text-decoration: line-through; cursor: default; }
+.mg-day.selected { background: var(--color-text); color: #fff; border-color: var(--color-text); }
+
+/* ---------- Reserve flow (guest form + confirmation) ---------- */
+.bk-form { display: grid; gap: 12px; }
+.bk-form label { display: grid; gap: 4px; font-size: 12px; font-weight: 600; }
+.bk-form input { height: 48px; padding: 0 12px; border: 1px solid var(--color-border); border-radius: 8px; font: inherit; font-size: 16px; font-weight: 400; }
+.bk-form input:focus { outline: 2px solid var(--color-text); outline-offset: 0; }
+.bk-form .reserve-button:disabled { opacity: .6; cursor: default; }
+.bk-error { margin: 0; font-size: 14px; color: #c13515; }
+.bk-cancel-link { border: 0; background: none; padding: 0; font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer; justify-self: center; }
+.bk-confirmed { display: grid; gap: 8px; }
+.bk-confirmed .bk-success { margin: 0; font-size: 16px; }
+.bk-confirmed .bk-breakdown { margin-top: 4px; }
+
+/* Booking fields are real <button>s: neutralise UA button styles (zero specificity, existing rules still win) */
+:where(button.booking-field) { border: 0; background: none; margin: 0; font: inherit; color: inherit; text-align: left; appearance: none; }

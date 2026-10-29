@@ -1,0 +1,145 @@
+/* =====================================================================
+   DESIGN SYSTEM — tokens + shared component rules + responsive.
+   Loaded LAST (main.jsx) so it normalises every component to the same values.
+   Change a token here and the whole page follows.
+   ===================================================================== */
+:root {
+  /* colour */
+  --color-primary: #0e7c86;
+  --color-primary-hover: #0a5f67;
+  --color-text: #222222;
+  --color-text-secondary: #717171;
+  --color-background: #ffffff;
+  --color-background-soft: #f7f7f7;
+  --color-border: #dddddd;
+  /* spacing (8px grid) */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+  /* radius */
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px; --radius-pill: 9999px;
+  /* type */
+  --font-body: Inter, Arial, Helvetica, sans-serif;
+  --fs-display: 40px; --fs-title: 26px; --fs-h2: 22px; --fs-card: 16px; --fs-body: 16px; --fs-sm: 14px; --fs-xs: 12px;
+  /* controls */
+  --control-h: 48px; --btn-h: 52px; --icon-btn: 40px;
+  /* elevation */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.08);
+  --shadow-float: 0 2px 6px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.08);
+  /* layout */
+  --container-max: 1120px; --page-pad: 80px; --nav-h: 90px;
+  /* legacy aliases used by older stylesheets */
+  --rausch: var(--color-primary); --line: var(--color-border); --mute: var(--color-text-secondary);
+}
+
+html, body, button, input, select, textarea { font-family: var(--font-body); }
+body { color: var(--color-text); background: var(--color-background); line-height: 1.4; }
+img { max-width: 100%; }
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--color-text); outline-offset: 2px;
+}
+
+/* ---- container & sections ---- */
+main { width: 100%; max-width: calc(var(--container-max) + 2 * var(--page-pad)); padding-inline: var(--page-pad); margin-inline: auto; }
+/* Navbar: full-bleed bar, 3-column grid so the search pill is truly centred on the page.
+   Measured from the reference (screenshot at 125% zoom => /1.25): 90px bar, 102px logo, 400x48 pill, 40px icon buttons. */
+.navbar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: var(--nav-h);
+  padding-inline: max(var(--page-pad), calc((100% - 1760px) / 2)); border-bottom: 1px solid var(--color-border); }
+.logo { justify-self: start; }
+.logo img, .logo svg { width: 118px; height: auto; display: block; }
+.search-bar { height: 48px; margin: 0; padding: 0 8px 0 24px; border-radius: var(--radius-pill); justify-self: center; }
+.search-section { min-width: 0; padding: 0 16px; }
+.home-section { min-width: 0; gap: 16px; padding-left: 0; }
+.search-divider { height: 24px; margin: 0; }
+.guest-section { min-width: 0; }
+.search-button { width: 32px; height: 32px; margin-left: 8px; }
+.search-button svg { width: 16px; height: 16px; }
+.navbar-right { justify-self: end; margin-left: 0; gap: 8px; }
+.host-button { height: 40px; padding: 0 12px; }
+.icon-button, .menu-button { width: 40px; height: 40px; border: 0; background: var(--color-background-soft); }
+.icon-button:hover, .menu-button:hover { background: #ebebeb; box-shadow: none; }
+.sec { max-width: none; padding: var(--space-7) 0; }
+.sec h2 { font-size: var(--fs-h2); line-height: 1.25; margin-bottom: var(--space-5); }
+.subnav-inner { max-width: var(--container-max); }
+
+/* ---- brand ---- */
+
+/* ---- title block ---- */
+.property-header { padding: var(--space-6) 0 var(--space-5); }
+.property-title h1 { font-size: var(--fs-title); line-height: 30px; font-weight: 600; letter-spacing: -.02em; }
+.property-title p { margin-top: var(--space-2); font-size: var(--fs-body); }
+.header-actions .hdr-btn { height: var(--icon-btn); padding: 0 var(--space-3); }
+
+/* ---- gallery ---- */
+.image-gallery { height: auto; aspect-ratio: 2.27 / 1; gap: var(--space-2); border-radius: var(--radius-md); }  /* 1120 x ~494 like the reference */
+.top-right, .last-image { border-radius: 0; }
+.show-photos { right: var(--space-5); bottom: var(--space-5); height: 40px; padding: 0 var(--space-4); gap: var(--space-2); border-radius: var(--radius-sm); border: 1px solid var(--color-text); box-shadow: var(--shadow-sm); }
+
+/* ---- main two-column layout (~70 / 30) ---- */
+.property-main { grid-template-columns: minmax(0, 1fr) 380px; gap: var(--space-8); padding-top: var(--space-6); }
+.property-aside { width: 100%; }
+
+/* ---- booking panel ---- */
+.property-aside .booking-card { border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-5); box-shadow: var(--shadow-float); }
+.booking-fields { border-radius: var(--radius-md); }
+.reserve-button, .reserve-sm { height: var(--btn-h); border-radius: var(--radius-md); background: var(--color-primary); color: #fff; font-size: var(--fs-body); font-weight: 600; padding-inline: var(--space-5); }
+.reserve-sm { height: var(--control-h); }
+.reserve-button:hover, .reserve-sm:hover { background: var(--color-primary-hover); }
+.promo { border-radius: var(--radius-md); }
+
+/* ---- secondary buttons / cards ---- */
+.btn-outline, .msg-host { min-height: var(--control-h); border-radius: var(--radius-md); border: 1px solid var(--color-border); font-size: var(--fs-body); font-weight: 600; padding: 0 var(--space-5); }
+.msg-host { background: var(--color-background-soft); border-color: transparent; font-size: var(--fs-sm); }
+.promo button { border-radius: var(--radius-sm); }
+.pager button { width: var(--icon-btn); height: var(--icon-btn); border-color: var(--color-border); }
+.host-card { border-radius: var(--radius-xl); box-shadow: var(--shadow-float); }
+.stay-img { border-radius: var(--radius-md); aspect-ratio: 4 / 3; }
+.stays li { flex-basis: calc((100% - 4 * var(--space-5)) / 5); }
+.stays { gap: var(--space-5); }
+
+/* ---- tablet ---- */
+@media (max-width: 1200px) { :root { --page-pad: 40px; } }
+@media (max-width: 1024px) {
+  .property-main { grid-template-columns: 1fr; gap: var(--space-6); }
+  .property-aside { position: static; }
+  .host-button { display: none; }
+  .sec .pager { display: none; }
+  .stays { overflow-x: auto; scroll-snap-type: x mandatory; gap: var(--space-4); }
+  .stays li { flex: 0 0 calc((100% - 2 * var(--space-4)) / 3); scroll-snap-align: start; }
+  .ttk { gap: var(--space-5); }
+}
+
+/* ---- mobile ---- */
+@media (max-width: 768px) {
+  :root { --page-pad: 24px; --fs-title: 24px; --fs-h2: 20px; }
+  .navbar { display: flex; justify-content: space-between; height: 64px; padding-inline: var(--page-pad); }
+  .logo img { width: 90px; }
+  .navbar-right { margin-left: 0; }
+  .navbar-right .icon-button, .search-divider, .search-bar .search-section:not(.home-section) { display: none; }
+  .search-bar { flex: 1; min-width: 0; height: var(--control-h); margin-inline: var(--space-3); padding-left: var(--space-4); }
+  .search-section { padding: 0 8px; }
+  .search-section { min-width: 0; }
+  .subnav ul { display: none; }
+  .subnav-inner { padding-inline: var(--page-pad); }
+  .property-header { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  /* same 5 photos, same order -> swipeable full-width carousel */
+  .image-gallery { display: flex; aspect-ratio: auto; overflow-x: auto; scroll-snap-type: x mandatory; gap: var(--space-2); -webkit-overflow-scrolling: touch; }
+  .image-gallery > div { flex: 0 0 100%; aspect-ratio: 4 / 3; scroll-snap-align: start; border-radius: 0; }
+  .sec { padding: var(--space-6) 0; }
+  .ttk, .rv-grid { grid-template-columns: 1fr; gap: var(--space-5); }
+  .stays li { flex-basis: calc((100% - var(--space-4)) / 2); }
+}
+@media (max-width: 480px) {
+  :root { --page-pad: 16px; }
+  .stays li { flex-basis: 70%; }
+  .reserve-button { width: 100%; }
+}
+
+/* Respect the OS "reduce motion" setting for every transition / animation / smooth scroll on the page. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
